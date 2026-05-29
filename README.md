@@ -1,4 +1,4 @@
-# ECE 9016 Cloud Computing Project: High Availability Web Deployment on GCP
+# Cloud Computing Project: High Availability Web Deployment on GCP
 
 ## Project Overview
 
