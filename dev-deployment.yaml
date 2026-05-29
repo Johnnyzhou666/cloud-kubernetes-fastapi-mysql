@@ -1,0 +1,81 @@
+---
+# Database Deployment (Dev)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      [cite_start]app: db # [cite: 31]
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      nodeSelector:
+        [cite_start]env: web-node-1 # [cite: 37]
+      containers:
+      - name: database
+        image: postgres:13 
+        ports:
+        - [cite_start]containerPort: 5432 # [cite: 26]
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "admin123"
+
+---
+# Internal Database Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service-dev
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: TCP
+      [cite_start]port: 8080 # [cite: 26]
+      targetPort: 5432
+
+---
+# Web Server Deployment (Dev)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      [cite_start]app: nginx # [cite: 32]
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      nodeSelector:
+        [cite_start]env: web-node-1 # [cite: 37]
+      containers:
+      - name: web-app
+        image: your-gcr-repo/python-web-app:latest 
+        ports:
+        - [cite_start]containerPort: 80 # [cite: 30]
+        env:
+        - name: DB_HOST
+          value: "db-service-dev"
+
+---
+# External LoadBalancer Service (Dev)
+apiVersion: v1
+kind: Service
+metadata:
+  [cite_start]name: nginx-service # [cite: 18]
+spec:
+  [cite_start]type: LoadBalancer # [cite: 22]
+  selector:
+    [cite_start]app: nginx # [cite: 23]
+  ports:
+    - [cite_start]port: 80 # [cite: 21]
+      targetPort: 80
