@@ -1,0 +1,17 @@
+# Code snippet from mysql-deployment.yaml
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "admin123"
+        ports:
+        - containerPort: 3306
+        # --- Add the section below ---
+        volumeMounts:
+        - name: init-db-volume
+          mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+      - name: init-db-volume
+        configMap:
+          name: mysql-init-script
